@@ -70,7 +70,7 @@ if __name__ == "__main__":
     # Example usage
 
     df = pd.read_csv(
-        "C:/Users/hp/Desktop/trading_project/workings/crypto_trading_environment/trading_engine/data/BTCUSDT_1h_2017-08-01_2025-06-01.csv",
+        "C:/Users/hp/Desktop/trading_project/workings/crypto_trading_environment/crypto_trading_environment/data/BTCUSDT_1h_2017-08-01_2025-06-01.csv",
         parse_dates=True,
         index_col=0,
     )
@@ -84,4 +84,4 @@ if __name__ == "__main__":
     print(df_with_indicators)
 
     # Save the DataFrame with indicators to a new CSV file
-    df_with_indicators.to_csv("ta_btcusdt_indicators.csv", index=True)
+    # df_with_indicators.to_csv("ta_btcusdt_indicators.csv", index=True)

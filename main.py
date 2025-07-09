@@ -52,6 +52,6 @@ if __name__ == "__main__":
         step_count += 1
 
         # Optional rendering
-        env.render(mode="human")
+        # env.render(mode="human")
 
     print(f"Finished in {step_count} steps, Final Reward (equity): {reward}")
