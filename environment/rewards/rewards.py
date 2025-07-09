@@ -14,6 +14,11 @@ class RewardCalculator:
         self.pv_history = []
         self.inital_portfolio_value = 0.0
 
+    def stepwise_portfolio_return(self):
+        if len(self.pv_history) < 2:
+            return 0.0
+        return (self.pv_history[-1] - self.pv_history[-2]) / self.pv_history[-2]
+
     def portfolio_return(self):
         if len(self.pv_history) < 2:
             return 0.0
@@ -47,6 +52,8 @@ class RewardCalculator:
             return self.sharpe_ratio()
         elif reward_type == "hybrid":
             return self.hybrid(alpha, use_log)
+        elif reward_type == "stepwise_portfolio_return":
+            return self.stepwise_portfolio_return()
         else:
             raise ValueError(f"Unknown reward type: {reward_type}")
 
@@ -54,10 +61,12 @@ class RewardCalculator:
 if __name__ == "__main__":
     # Example usage
     rc = RewardCalculator(inital_portfolio_value=1000)
-    rc.update(1000)
-    rc.update(1050)
-    rc.update(1100)
-    print("Portfolio Return:", rc.portfolio_return())
-    print("Log Portfolio Return:", rc.log_portfolio_return())
-    print("Sharpe Ratio:", rc.sharpe_ratio())
-    print("Hybrid Reward:", rc.hybrid())
+
+    values = [1000, 1050, 1100, 1200, 1150, 800, 600, 1200]
+    for value in values:
+        rc.update(value)
+        print("\n Updated Portfolio Value:", value)
+        print("Portfolio Return:", rc.portfolio_return())
+        print("Log Portfolio Return:", rc.log_portfolio_return())
+        print("Tickwise Portfolio Return:", rc.tickwise_portfolio_return())
+        print("Sharpe Ratio:", rc.sharpe_ratio())
