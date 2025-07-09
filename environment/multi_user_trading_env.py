@@ -89,7 +89,7 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         daywise_logs_path="logs/users_portfolio_values_daywise.json",
         engine_logs_path="logs/users_details.json",
     ):
-        super().__init__()
+        super(MultiUserSingleAssetTradingDiscreteActionEnv, self).__init__()
         self.asset = asset
         self.engine_data_path = engine_data_path
         self.env_data_path = env_data_path
@@ -625,6 +625,7 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
 
         if self.current_step >= len(self.env_data) or engine_done:
             self.done = True
+            # self.current_step -= 1  # Adjust current step to the last valid step
             if engine_done:
                 print(f"Engine done !!, current step: {self.current_step}, ")
 
@@ -638,6 +639,10 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
     def render(self, mode="human"):
         """Renders the environment."""
         if mode == "human":
+            if self.current_step >= len(self.env_data):
+                print("No more data to render.")
+                return
+
             print(
                 f"Step: {self.current_step}, Timestamp: {self.timestamps[self.current_step]}, Base User Portfolio Value: {self._get_base_user_portfolio_value()}"
             )

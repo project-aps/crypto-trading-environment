@@ -20,20 +20,14 @@ users_config = {
     },
 }
 
-# engine_data_path = (
-#     "C:/Users/hp/Desktop/trading_project/workings/crypto_trading_environment/trading_engine/data/BTCUSDT_1h_2017-08-01_2025-06-01.csv",
-# )  # raw OHLCV data for trading engine
-# env_data_path = (
-#     "C:/Users/hp/Desktop/trading_project/workings/crypto_trading_environment/trading_engine/data/indicators/processed_data_with_indicators_BTCUSDT.csv",
-# )  # observation data with indicators
 
 if __name__ == "__main__":
     print("Starting Multi-User Single Asset Trading Environment...")
 
     # Initialize environment
     env = MultiUserSingleAssetTradingDiscreteActionEnv(
-        engine_data_path="C:/Users/hp/Desktop/trading_project/workings/crypto_trading_environment/trading_engine/data/testings_small/BTCUSDT_engine_data_1000.csv",  # raw OHLCV data for trading engine
-        env_data_path="C:/Users/hp/Desktop/trading_project/workings/crypto_trading_environment/trading_engine/data/testings_small/BTCUSDT_env_data_1000.csv",  # observation data with indicators
+        engine_data_path="data/testings_small/BTCUSDT_engine_data_1000.csv",  # raw OHLCV data for trading engine
+        env_data_path="data/testings_small/BTCUSDT_env_scaled_data_1000.csv",  # observation data with indicators
         users_config=users_config,  # {}
         base_user_config=base_user_config,
         asset="BTCUSDT",
