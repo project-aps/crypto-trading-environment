@@ -39,6 +39,7 @@ if __name__ == "__main__":
         daywise_logs_path="logs/users_portfolio_values_daywise_5.json",
         engine_logs_path="logs/users_details_5.json",
         verbose=False,  # Set to True for verbose logging
+        bankrupt_threshold=0.001,  # Threshold for bankruptcy check
     )
     # check_env(env)
 

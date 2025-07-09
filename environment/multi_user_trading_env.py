@@ -89,6 +89,7 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         daywise_logs_path=None,
         engine_logs_path=None,
         verbose=False,
+        bankrupt_threshold=0.01,  # Threshold for bankruptcy check
     ):
         super(MultiUserSingleAssetTradingDiscreteActionEnv, self).__init__()
         self.asset = asset
@@ -99,6 +100,10 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         self.window_size = window_size
         self.reward_type = reward_type
         self.verbose = verbose
+        self.bankrupt_threshold = bankrupt_threshold
+        self.bankrupt_portfolio_value = (
+            self.bankrupt_threshold * self.base_user_config["initial_cash"]
+        )
 
         self.store_daywise_portfolio_values = store_daywise_portfolio_values
         self.daywise_logs_path = daywise_logs_path
@@ -562,13 +567,12 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
     #######################################################################
     def _is_base_user_bankrupt(self):
         """Checks if the base user is bankrupt."""
-        min_portfolio_value = 0.01 * self.base_user_config["initial_cash"]
         base_user_portfolio_value = self._get_base_user_portfolio_value()
-        bankrupt = base_user_portfolio_value <= min_portfolio_value
+        bankrupt = base_user_portfolio_value <= self.bankrupt_portfolio_value
         if bankrupt:
             print(
                 f"Base user is bankrupt with portfolio value: {base_user_portfolio_value}, "
-                f"minimum required portfolio value: {min_portfolio_value}"
+                f"minimum required portfolio value: {self.bankrupt_portfolio_value}"
             )
         return bankrupt
 
