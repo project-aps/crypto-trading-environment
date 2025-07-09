@@ -86,8 +86,8 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         window_size=50,
         reward_type="portfolio_return",
         store_daywise_portfolio_values=False,
-        daywise_logs_path="logs/users_portfolio_values_daywise.json",
-        engine_logs_path="logs/users_details.json",
+        daywise_logs_path=None,
+        engine_logs_path=None,
         verbose=False,
     ):
         super(MultiUserSingleAssetTradingDiscreteActionEnv, self).__init__()
@@ -551,12 +551,13 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
 
     def _save_engine_data(self):
         """Saves the engine data to a CSV file."""
-        if self.store_daywise_portfolio_values:
+        if self.store_daywise_portfolio_values and self.daywise_logs_path:
             self.engine.save_all_users_portfolio_values_daywise(
                 file_path=self.daywise_logs_path
             )
-
-        self.engine.save_all_users_details(file_path=self.engine_logs_path)
+        if self.engine_logs_path:
+            # Save the engine details in json file
+            self.engine.save_all_users_details(file_path=self.engine_logs_path)
 
     #######################################################################
 
@@ -635,8 +636,8 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         if self.current_step >= len(self.env_data) or engine_done:
             self.done = True
             # self.current_step -= 1  # Adjust current step to the last valid step
-            if engine_done:
-                print(f"Engine done !!, current step: {self.current_step}, ")
+            # if engine_done:
+            #     print(f"Engine done !!, current step: {self.current_step}, ")
 
             # Save the engine data in json file
             self._save_engine_data()
