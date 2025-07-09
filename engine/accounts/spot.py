@@ -73,22 +73,26 @@ class SpotAccount(Account):
         if order.qty == "all_cash":
             order.qty = self.max_open_qty(px, order.side, True)
             if order.qty == 0:
-                print(f"Order {order.id} has zero quantity after max calculation.")
+                if self.verbose:
+                    print(f"Order {order.id} has zero quantity after max calculation.")
                 return
             if order.qty <= 0:
-                print(
-                    f"Order {order.id} has non-positive or zero quantity after max calculation."
-                )
+                if self.verbose:
+                    print(
+                        f"Order {order.id} has non-positive or zero quantity after max calculation."
+                    )
                 return
         elif order.qty == "all_holdings":
             order.qty = self.max_sell_qty(order.asset)
             if order.qty == 0:
-                print(f"Order {order.id} has zero quantity after max calculation.")
+                if self.verbose:
+                    print(f"Order {order.id} has zero quantity after max calculation.")
                 return
             if order.qty <= 0:
-                print(
-                    f"Order {order.id} has non-positive or zero quantity after max calculation."
-                )
+                if self.verbose:
+                    print(
+                        f"Order {order.id} has non-positive or zero quantity after max calculation."
+                    )
                 return
         if order.mode != "spot":
             print(f"Order {order.id} is not a spot order.")
