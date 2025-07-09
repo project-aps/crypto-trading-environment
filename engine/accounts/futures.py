@@ -194,11 +194,8 @@ class FuturesAccount(Account):
         order.liquidation_price = liquidation_price
         self.open_orders.append(order)
 
-        print("-" * 50)
-        print(
-            f"FUTURES Order -> {order.id} OPEN: {order.side.upper()} {order.qty} using {order.leverage}X {order.asset} at {px} on {ts}"
-        )
-        print("-" * 50)
+        if self.verbose:
+            self._log_order(order, px, ts, "open")
 
     def close(self, order_id, ts, md, fee_calc):
         """
@@ -275,11 +272,8 @@ class FuturesAccount(Account):
         order.closed = True
         self._record_close(order, px, ts)
 
-        print("-" * 50)
-        print(
-            f"FUTURES Order -> {order.id} CLOSED: {order.side.upper()} {order.qty} using {order.leverage}X {order.asset} at {px} on {ts} got R_ROI {order.realized_roi_percentage_100:.2f}% "
-        )
-        print("-" * 50)
+        if self.verbose:
+            self._log_order(order, px, ts, "close")
 
     def update_portfolio_value(self, current_prices, ts, fee_calc):
         """

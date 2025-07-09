@@ -88,6 +88,7 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         store_daywise_portfolio_values=False,
         daywise_logs_path="logs/users_portfolio_values_daywise.json",
         engine_logs_path="logs/users_details.json",
+        verbose=False,
     ):
         super(MultiUserSingleAssetTradingDiscreteActionEnv, self).__init__()
         self.asset = asset
@@ -97,6 +98,7 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         self.users_config = users_config
         self.window_size = window_size
         self.reward_type = reward_type
+        self.verbose = verbose
 
         self.store_daywise_portfolio_values = store_daywise_portfolio_values
         self.daywise_logs_path = daywise_logs_path
@@ -112,7 +114,8 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         # self._init_rewarder()
 
         self.action_space = spaces.Discrete(3)  # 0 = hold, 1 = buy/long, 2 = sell/short
-        obs_shape = (self.window_size, self.env_data.shape[1] - 1)
+        # Observation space is a window of historical data with indicators # -1 to exclude the date column
+        obs_shape = (self.window_size * (self.env_data.shape[1] - 1),)
         self.observation_space = spaces.Box(
             low=-np.inf,
             high=np.inf,
@@ -137,6 +140,7 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
             asset_paths={self.asset: self.engine_data_path},
             update_daywise_portfolio_values=self.store_daywise_portfolio_values,
             current_ts=self.start_date,
+            verbose=self.verbose,
         )
 
     def _init_base_user(self):
@@ -567,7 +571,8 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         self._init_base_user()
         self._init_users()
         self._init_rewarder()
-        return self._get_observation()
+        info = {}
+        return self._get_observation(), info
 
     def _get_observation(self):
         """Returns the current observation for the environment."""
@@ -580,6 +585,10 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
             .drop(columns=["date"])
             .values
         )
+        # flatten the observation to match the expected shape
+        # obs = obs.flatten()
+        obs = obs.reshape(-1)
+
         return obs.astype(np.float32)
 
     def step(self, action):

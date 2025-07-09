@@ -39,7 +39,7 @@ class Account:
 
     """
 
-    def __init__(self, acc_name, acc_type, cash):
+    def __init__(self, acc_name, acc_type, cash, verbose=False):
         self.acc_name = "Account" if acc_name is None else acc_name
         self.acc_type = acc_type
         self.initial_cash = cash
@@ -48,6 +48,7 @@ class Account:
         self.holdings = defaultdict(float)
         self.open_orders = []
         self.history = []
+        self.verbose = verbose  # Set to True for verbose logging
 
     def _apply_slippage(self, price, side, slippage_rate):
         return price * (
@@ -108,7 +109,8 @@ class Account:
         )  # Liquidation results in a total loss
 
         self._record_close(order, price, close_ts, liquidated=True)
-        print(f"Order {order.id} liquidated at price {price} on {close_ts}.")
+        if self.verbose:
+            print(f"Order {order.id} liquidated at price {price} on {close_ts}.")
 
     def _round_qty(self, qty, qty_step=MINIMUM_QTY_STEP):
         """
@@ -139,6 +141,26 @@ class Account:
         )
 
         return float(truncated_qty)
+
+    def _log_order(self, order, px, ts, type="open"):
+        """
+        Log the order details.
+        This method is called when an order is created or closed.
+        """
+
+        if type == "open":
+            print("-" * 50)
+            print(
+                f"{order.mode.upper()} Order -> {order.id} OPEN: {order.side.upper()} {order.qty} using {order.leverage}X  {order.asset} at {px} on {ts}"
+            )
+            print("-" * 50)
+
+        elif type == "close":
+            print("-" * 50)
+            print(
+                f"{order.mode.upper()} Order -> {order.id} CLOSED: {order.side.upper()} {order.qty} using {order.leverage}X {order.asset} at {px} on {ts} got R_ROI {order.realized_roi_percentage_100:.2f}%"
+            )
+            print("-" * 50)
 
     def return_account_details(self):
         """

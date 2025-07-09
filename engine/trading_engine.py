@@ -69,13 +69,17 @@ class TradingEngine:
     """
 
     def __init__(
-        self, asset_paths, current_ts=None, update_daywise_portfolio_values=False
+        self,
+        asset_paths,
+        current_ts=None,
+        update_daywise_portfolio_values=False,
+        verbose=False,
     ):
         self.md = MarketData(asset_paths)
         self.fee_calc = FeeCalculator(
             FEE_STRUCTURE, BORROW_INTEREST_HOURLY, FUNDING_FEE_EVERY_8H
         )
-
+        self.verbose = verbose  # Set to True for verbose logging
         self.users = {}
         self.assets = self.md.assets
         self.current_ts = (
@@ -121,6 +125,7 @@ class TradingEngine:
             spot_initial_cash=spot_initial_cash,
             margin_initial_cash=margin_initial_cash,
             futures_initial_cash=futures_initial_cash,
+            verbose=self.verbose,
         )
 
     def get_user(self, user_id):

@@ -1,6 +1,8 @@
 # Example usage
 from environment import MultiUserSingleAssetTradingDiscreteActionEnv
 
+# from stable_baselines3.common.env_checker import check_env
+
 
 base_user_config = {
     "account": "spot",  # "spot", "margin", or "futures"
@@ -36,16 +38,19 @@ if __name__ == "__main__":
         store_daywise_portfolio_values=True,
         daywise_logs_path="logs/users_portfolio_values_daywise_5.json",
         engine_logs_path="logs/users_details_5.json",
+        verbose=False,  # Set to True for verbose logging
     )
+    # check_env(env)
 
     # Reset environment
-    obs = env.reset()
+    obs, _ = env.reset()
+    # print(f"Observation shape: {obs.shape}, Observation: {obs}")
 
     done = False
     total_reward = 0
     step_count = 0
 
-    while not done:
+    while not done and step_count < 100:  # Limit to some steps for testing
         action = env.action_space.sample()  # or use model.predict(obs)
         obs, reward, done, truncated, info = env.step(action)
         total_reward += reward

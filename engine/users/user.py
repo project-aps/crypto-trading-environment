@@ -28,8 +28,10 @@ class User:
         spot_initial_cash=100000,
         margin_initial_cash=100000,
         futures_initial_cash=100000,
+        verbose=False,
     ):
         self.user_id = user_id
+        self.verbose = verbose
         # self.accounts = {
         #     "spot": SpotAccount("spot", "regular", spot_initial_cash),
         #     "margin": MarginAccount("margin", "regular", margin_initial_cash),
@@ -38,15 +40,21 @@ class User:
         self.accounts = {}
         if spot_account:
             self.accounts[SPOT_ACCOUNT] = SpotAccount(
-                SPOT_ACCOUNT, REGULAR_ACCOUNT_SUBTYPE, spot_initial_cash
+                SPOT_ACCOUNT, REGULAR_ACCOUNT_SUBTYPE, spot_initial_cash, self.verbose
             )
         if margin_account:
             self.accounts[MARGIN_ACCOUNT] = MarginAccount(
-                MARGIN_ACCOUNT, REGULAR_ACCOUNT_SUBTYPE, margin_initial_cash
+                MARGIN_ACCOUNT,
+                REGULAR_ACCOUNT_SUBTYPE,
+                margin_initial_cash,
+                self.verbose,
             )
         if futures_account:
             self.accounts[FUTURES_ACCOUNT] = FuturesAccount(
-                FUTURES_ACCOUNT, REGULAR_ACCOUNT_SUBTYPE, futures_initial_cash
+                FUTURES_ACCOUNT,
+                REGULAR_ACCOUNT_SUBTYPE,
+                futures_initial_cash,
+                self.verbose,
             )
         self.portfolio_value = {
             mode: account.portfolio_value for mode, account in self.accounts.items()

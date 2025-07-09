@@ -136,11 +136,8 @@ class SpotAccount(Account):
         order.open_ts = ts
         order.closed = True
         self.history.append(order)
-        print("-" * 50)
-        print(
-            f"SPOT Order -> {order.id} OPEN: {order.side.upper()} {order.qty} {order.asset} at {px} on {ts}"
-        )
-        print("-" * 50)
+        if self.verbose:
+            self._log_order(order, px, ts, "open")
 
     def update_portfolio_value(self, current_prices, ts, fee_calc):
         """
