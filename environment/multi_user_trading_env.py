@@ -560,6 +560,19 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
             self.engine.save_all_users_details(file_path=self.engine_logs_path)
 
     #######################################################################
+    def _is_base_user_bankrupt(self):
+        """Checks if the base user is bankrupt."""
+        min_portfolio_value = 0.01 * self.base_user_config["initial_cash"]
+        base_user_portfolio_value = self._get_base_user_portfolio_value()
+        bankrupt = base_user_portfolio_value <= min_portfolio_value
+        if bankrupt:
+            print(
+                f"Base user is bankrupt with portfolio value: {base_user_portfolio_value}, "
+                f"minimum required portfolio value: {min_portfolio_value}"
+            )
+        return bankrupt
+
+    #######################################################################
 
     def reset(self, seed=None, options=None):
         """Resets the environment to an initial state and returns the initial observation."""
@@ -633,7 +646,13 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         self.current_step += 1
         engine_done = self.engine.update_current_timestamp()
 
-        if self.current_step >= len(self.env_data) or engine_done:
+        ######################################
+
+        if (
+            self.current_step >= len(self.env_data)
+            or engine_done
+            or self._is_base_user_bankrupt()
+        ):
             self.done = True
             # self.current_step -= 1  # Adjust current step to the last valid step
             # if engine_done:

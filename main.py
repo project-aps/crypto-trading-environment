@@ -5,9 +5,9 @@ from environment import MultiUserSingleAssetTradingDiscreteActionEnv
 
 
 base_user_config = {
-    "account": "spot",  # "spot", "margin", or "futures"
+    "account": "futures",  # "spot", "margin", or "futures"
     "initial_cash": 10000,
-    "leverage": 1,
+    "leverage": 50,
 }
 users_config = {
     "user_1": {
