@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+trading_venv/
+.env/
+.venv/
+
+
+# Test cache and coverage reports
+.pytest_cache/
+.coverage
+htmlcov/
+.vscode/
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# VSCode and IDEs
+.vscode/
+.idea/
+
+# Data and models (optional, if too large or sensitive)
+data/*
+logs/
+tests/
+models/
+*.h5
+*.pkl
+# *.csv
+
+# Except the subdirectory "testings_small"
+!data/testings_small/
+
+# Include everything inside the "keep" folder
+!data/testings_small/**
