@@ -5,6 +5,8 @@ import os
 import joblib
 import json
 
+DATE_COL = "date"
+
 
 # --- STEP 1: Load and add indicators ---
 def load_and_add_indicators(csv_path):
@@ -71,7 +73,7 @@ def get_env_data(df, scaler=None, fit_scaler=False):
             scaler = joblib.load(SCALER_FILE)
         scaled = scaler.transform(features)
 
-    scaled_df = pd.DataFrame(scaled, columns=features.columns)
+    scaled_df = pd.DataFrame(scaled, columns=features.columns, index=df.index)
     scaled_df[DATE_COL] = df[DATE_COL]
     return scaled_df[[DATE_COL] + list(features.columns)]
 
@@ -112,8 +114,13 @@ if __name__ == "__main__":
 
     # --- CONFIG ---
     CSV_FILE = "data/BTCUSDT_1h_2017-08-01_2025-06-01.csv"
-    SCALER_FILE = "data/final_data/btcusdt/env_data_scaler_2017_08_19_2023_12_31.pkl"
     DATE_COL = "date"
+    ASSET_NAME = "btcusdt2"
+    BASE_SAVE_DIR = f"data/final_data/{ASSET_NAME}"
+    SCALER_FILE = f"{BASE_SAVE_DIR}/env_data_scaler_2017_08_19_2023_12_31.pkl"
+
+    # Ensure base directory exists
+    os.makedirs(BASE_SAVE_DIR, exist_ok=True)
 
     train_engine, train_env, test_engine, test_env = preprocess_pipeline(
         CSV_FILE, TRAIN_START, TRAIN_END, TEST_START, TEST_END
@@ -121,13 +128,13 @@ if __name__ == "__main__":
 
     # save the processed dataframes
     train_engine.to_csv(
-        "data/final_data/btcusdt/btcusdt_train_engine_data.csv", index=False
+        f"{BASE_SAVE_DIR}/{ASSET_NAME}_train_engine_data.csv", index=False
     )
-    train_env.to_csv("data/final_data/btcusdt/btcusdt_train_env_data.csv", index=False)
+    train_env.to_csv(f"{BASE_SAVE_DIR}/{ASSET_NAME}_train_env_data.csv", index=False)
     test_engine.to_csv(
-        "data/final_data/btcusdt/btcusdt_test_engine_data.csv", index=False
+        f"{BASE_SAVE_DIR}/{ASSET_NAME}_test_engine_data.csv", index=False
     )
-    test_env.to_csv("data/final_data/btcusdt/btcusdt_test_env_data.csv", index=False)
+    test_env.to_csv(f"{BASE_SAVE_DIR}/{ASSET_NAME}_test_env_data.csv", index=False)
 
     # Also save configurations
     config = {
@@ -142,7 +149,7 @@ if __name__ == "__main__":
         "test_engine_shape": test_engine.shape,
         "test_env_shape": test_env.shape,
     }
-    config_file = "data/final_data/btcusdt/preprocess_config.json"
+    config_file = f"{BASE_SAVE_DIR}/preprocess_config.json"
     with open(config_file, "w") as f:
         json.dump(config, f, indent=4)
 
