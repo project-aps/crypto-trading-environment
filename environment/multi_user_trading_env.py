@@ -90,6 +90,7 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         engine_logs_path=None,
         verbose=False,
         bankrupt_threshold=0.01,  # Threshold for bankruptcy check
+        obs_shape_type="flat",  # windowed or flat
     ):
         super(MultiUserSingleAssetTradingDiscreteActionEnv, self).__init__()
         self.asset = asset
@@ -109,6 +110,8 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         self.daywise_logs_path = daywise_logs_path
         self.engine_logs_path = engine_logs_path
 
+        self.obs_shape_type = obs_shape_type
+
         self.current_step = self.window_size - 1
         self.done = False
 
@@ -120,7 +123,11 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
 
         self.action_space = spaces.Discrete(3)  # 0 = hold, 1 = buy/long, 2 = sell/short
         # Observation space is a window of historical data with indicators # -1 to exclude the date column
-        obs_shape = (self.window_size * (self.env_data.shape[1] - 1),)
+        if self.obs_shape_type == "flat":
+            obs_shape = (self.window_size * (self.env_data.shape[1] - 1),)
+        elif self.obs_shape_type == "windowed":
+            obs_shape = (self.window_size, self.env_data.shape[1] - 1)
+
         self.observation_space = spaces.Box(
             low=-np.inf,
             high=np.inf,
@@ -598,14 +605,24 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
             raise ValueError("Current step exceeds the length of the environment data.")
 
         start_idx = self.current_step - self.window_size + 1
-        obs = (
-            self.env_data.iloc[start_idx : self.current_step + 1]
-            .drop(columns=["date"])
-            .values
-        )
-        # flatten the observation to match the expected shape
-        # obs = obs.flatten()
-        obs = obs.reshape(-1)
+
+        if self.obs_shape_type == "windowed":
+            obs = (
+                self.env_data.iloc[start_idx : self.current_step + 1]
+                .drop(columns=["date"])
+                .values
+            )
+            # reshape the observation to match the expected shape
+            obs = obs.reshape(self.window_size, -1)
+        elif self.obs_shape_type == "flat":
+            obs = (
+                self.env_data.iloc[start_idx : self.current_step + 1]
+                .drop(columns=["date"])
+                .values
+            )
+            # flatten the observation to match the expected shape
+            # obs = obs.flatten()
+            obs = obs.reshape(-1)
 
         return obs.astype(np.float32)
 
@@ -695,9 +712,3 @@ class MultiUserSingleAssetTradingDiscreteActionEnv(gym.Env):
         """Closes the environment."""
         # self.engine.close()
         print("Environment closed.")
-
-
-if __name__ == "__main__":
-
-    # Example usage
-    pass

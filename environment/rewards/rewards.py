@@ -68,5 +68,5 @@ if __name__ == "__main__":
         print("\n Updated Portfolio Value:", value)
         print("Portfolio Return:", rc.portfolio_return())
         print("Log Portfolio Return:", rc.log_portfolio_return())
-        print("Tickwise Portfolio Return:", rc.tickwise_portfolio_return())
+        print("Tickwise Portfolio Return:", rc.stepwise_portfolio_return())
         print("Sharpe Ratio:", rc.sharpe_ratio())
